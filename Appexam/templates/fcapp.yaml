@@ -1,0 +1,119 @@
+# gateway-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway-container
+          image: {{ .Values.gateway.image }}
+          ports:
+            - containerPort: {{ .Values.gateway.targetPort }}
+          command: ["sh", "-c", "uvicorn main:app --reload --host 0.0.0.0"]
+          env:
+            - name: USERS_SERVICE_URL
+              value: "http://users-service:{{ .Values.users.targetPort }}"
+            - name: ORDERS_SERVICE_URL
+              value: "http://orders-service:{{ .Values.orders.targetPort }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  selector:
+    app: gateway
+  type: NodePort
+  ports:
+    - port: {{ .Values.gateway.port }}
+      targetPort: {{ .Values.gateway.targetPort }}
+      nodePort: {{ .Values.gateway.nodePort }}
+
+
+
+---
+
+# orders-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders
+    spec:
+      containers:
+        - name: orders-container
+          image: {{ .Values.orders.image }}  # Utilize the defined image value
+          ports:
+            - containerPort: {{ .Values.orders.port }}  # Utilize the defined port value
+          command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service
+spec:
+  selector:
+    app: orders
+  type: NodePort
+  ports:
+    - port: {{ .Values.orders.port }}  # Utilize the defined port value
+      targetPort: {{ .Values.orders.targetPort }}  # Utilize the defined targetPort value
+      nodePort: {{ .Values.orders.nodePort }}  # Utilize the defined nodePort value
+
+---
+
+# users-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users-container
+          image: {{ .Values.users.image }}  # Utilize the defined image value
+          ports:
+            - containerPort: {{ .Values.users.port }}  # Utilize the defined port value
+          command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+spec:
+  selector:
+    app: users
+  type: NodePort
+  ports:
+    - port: {{ .Values.users.port }}  # Utilize the defined port value
+      targetPort: {{ .Values.users.targetPort }}  # Utilize the defined targetPort value
+      nodePort: {{ .Values.users.nodePort }}  # Utilize the defined nodePort value
+
