@@ -20,6 +20,8 @@ stages:
   - push
   - deploy_dev
   - deploy_QA
+  - deploy_staging
+  - deploy_prod
 
 test:
   stage: test
@@ -85,3 +87,34 @@ deploy_QA:
     - sed -i "s|jaobed/users_image:v.00|$CI_REGISTRY_IMAGE/$S_USERS:$CI_COMMIT_SHORT_SHA|g" values.yml
     - cat values.yml
     - sudo helm upgrade --install app Appexam/ --values=values.yml --namespace $KUBE_NAMESPACE_qa
+
+deploy_staging:
+  stage: deploy_staging
+  script:
+    - rm -Rf .kube
+    - mkdir .kube
+    - ls
+    - cat $KUBE_CONFIG > .kube/config
+    - cp Appexam/valuesstaging.yaml values.yml
+    - cat values.yml
+    - sed -i "s|jaobed/gatway_image:v.00|$CI_REGISTRY_IMAGE/$S_GATEWAY:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - sed -i "s|jaobed/orders_image:v.00|$CI_REGISTRY_IMAGE/$S_ORDERS:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - sed -i "s|jaobed/users_image:v.00|$CI_REGISTRY_IMAGE/$S_USERS:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - cat values.yml
+    - sudo helm upgrade --install app Appexam/ --values=values.yml --namespace $KUBE_NAMESPACE_staging
+
+
+deploy_prod:
+  stage: deploy_prod
+  script:
+    - rm -Rf .kube
+    - mkdir .kube
+    - ls
+    - cat $KUBE_CONFIG > .kube/config
+    - cp Appexam/valuesprod.yaml values.yml
+    - cat values.yml
+    - sed -i "s|jaobed/gatway_image:v.00|$CI_REGISTRY_IMAGE/$S_GATEWAY:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - sed -i "s|jaobed/orders_image:v.00|$CI_REGISTRY_IMAGE/$S_ORDERS:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - sed -i "s|jaobed/users_image:v.00|$CI_REGISTRY_IMAGE/$S_USERS:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - cat values.yml
+    - sudo helm upgrade --install app Appexam/ --values=values.yml --namespace $KUBE_NAMESPACE_prod
