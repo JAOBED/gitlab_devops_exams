@@ -17,6 +17,7 @@ stages:
   - test
   - build
   - push
+  - deploy_dev
 
 test:
   stage: test
@@ -50,3 +51,23 @@ push:
         docker push "$CI_REGISTRY_IMAGE/$S_ORDERS:latest";
         docker push "$CI_REGISTRY_IMAGE/$S_USERS:latest";
       fi
+
+deploy_dev:
+  environment:
+    name: dev-$CI_BUILD_REF_NAME
+    url: http://$IP_DEV:$NODEPORT_DEV
+    on_stop: stop_dev
+  stage: deploy_dev
+  script:
+    - rm -Rf .kube
+    - mkdir .kube
+    - ls
+    - cat $KUBE_CONFIG > .kube/config
+    - cp Appexam/values.yaml values.yml
+    - cat values.yml
+    - sed -i "s|jaobed/gatway_image:v.00|$CI_REGISTRY_IMAGE/$S_GATEWAY:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - sed -i "s|jaobed/orders_image:v.00|$CI_REGISTRY_IMAGE/$S_ORDERS:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - sed -i "s|jaobed/users_image:v.00|$CI_REGISTRY_IMAGE/$S_USERS:$CI_COMMIT_SHORT_SHA|g" values.yml
+    - cat values.yml
+
+    #- sudo helm upgrade --install app Appexam/ --values=values.yml --namespace $KUBE_NAMESPACE_dev
