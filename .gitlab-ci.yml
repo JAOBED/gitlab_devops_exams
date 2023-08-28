@@ -1,7 +1,7 @@
 variables:
   # The domain used for the live deploy_prodment
   KUBE_NAMESPACE_dev: dev
-  KUBE_NAMESPACE_dev: qa
+  KUBE_NAMESPACE_qa: qa
   KUBE_NAMESPACE_staging: staging
   KUBE_NAMESPACE_prod: prod
   IP_DEV: 54.217.94.203 #Remplacer par votre IP de la VM
