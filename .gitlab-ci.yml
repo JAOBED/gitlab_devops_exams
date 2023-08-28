@@ -118,3 +118,6 @@ deploy_prod:
     - sed -i "s|jaobed/users_image:v.00|$CI_REGISTRY_IMAGE/$S_USERS:$CI_COMMIT_SHORT_SHA|g" values.yml
     - cat values.yml
     - sudo helm upgrade --install app Appexam/ --values=values.yml --namespace $KUBE_NAMESPACE_prod
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: manual
