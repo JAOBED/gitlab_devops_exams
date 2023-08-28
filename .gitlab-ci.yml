@@ -53,10 +53,6 @@ push:
       fi
 
 deploy_dev:
-  environment:
-    name: dev-$CI_BUILD_REF_NAME
-    url: http://$IP_DEV:$NODEPORT_DEV
-    on_stop: stop_dev
   stage: deploy_dev
   script:
     - rm -Rf .kube
