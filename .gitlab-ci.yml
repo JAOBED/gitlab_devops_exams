@@ -4,12 +4,6 @@ variables:
   KUBE_NAMESPACE_qa: qa
   KUBE_NAMESPACE_staging: staging
   KUBE_NAMESPACE_prod: prod
-  IP_DEV: 54.217.94.203 #Remplacer par votre IP de la VM
-  IP_STAGING: 54.217.94.203 #Remplacer par votre IP de la VM
-  IP_PROD: 54.217.94.203 #Remplacer par votre IP de la VM
-  NODEPORT_DEV: 30000
-  NODEPORT_STAGING: 30001
-  NODEPORT_PROD: 30002
   S_GATEWAY: gateway
   S_ORDERS: orders
   S_USERS: users
