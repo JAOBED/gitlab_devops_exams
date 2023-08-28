@@ -14,7 +14,7 @@ spec:
       labels:
         app: gateway
     spec:
-      magePullSecrets:
+      imagePullSecrets:
         - name: regcred
       containers:
         - name: gateway-container
@@ -61,7 +61,7 @@ spec:
       labels:
         app: orders
     spec:
-      magePullSecrets:
+      imagePullSecrets:
         - name: regcred
       containers:
         - name: orders-container
