@@ -16,7 +16,7 @@ variables:
 stages:
   - test
   - build
-
+  - push
 
 test:
   stage: test
